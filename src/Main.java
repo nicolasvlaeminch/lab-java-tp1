@@ -7,8 +7,7 @@ import model.producto.Envasado;
 import model.producto.Limpieza;
 
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -31,16 +30,16 @@ public class Main {
             try {
                 switch (opcion) {
                     case "1":
-                        Producto productoLimpieza1 = new Limpieza("Detergente", 3, 100, 50, true, TipoAplicacion.COCINA);
-                        Producto productoLimpieza2 = new Limpieza("Limpiador de pisos", 1, 80, 20, true, TipoAplicacion.PISOS);
-                        Producto productoLimpieza3 = new Limpieza("Jabon en polvo", 1, 60, 30, true, TipoAplicacion.ROPA);
-                        Producto productoLimpieza4 = new Limpieza("Jabon en barra", 1, 10, 40, true, TipoAplicacion.ROPA);
-                        Producto productoLimpieza5 = new Limpieza("Paño de microfibra", 1, 10, 40, true, TipoAplicacion.MULTIUSO);
-                        Producto productoBebida1 = new Bebida("Gaseosa Manaos", 1, 30, 40, true, LocalDate.of(2025, 7, 31), 500, false);
-                        Producto productoBebida2 = new Bebida("Whiskey Jack Daniels", 1, 200, 35, true, LocalDate.of(2025, 2, 20), 4,1000,true);
-                        Producto productoEnvasado1 = new Envasado("Queso cremoso", 1, 30, 40, true, TipoEnvase.PLASTICO, false, LocalDate.of(2025, 2, 20), 1000);
-                        Producto productoEnvasado2 = new Envasado("Lata de frijoles magicos", 1, 20, 30, true, TipoEnvase.LATA, true, LocalDate.of(2026, 3, 20), 1000);
-                        Producto productoEnvasado3 = new Envasado("Mermelada de frutilla", 1, 10, 50, true, TipoEnvase.VIDRIO, false, LocalDate.of(2025, 6, 17), 1000);
+                        Producto productoLimpieza1 = new Limpieza("Detergente", 3, 100, 50, true,10, TipoAplicacion.COCINA);
+                        Producto productoLimpieza2 = new Limpieza("Limpiador de pisos", 1, 80, 20, true,10, TipoAplicacion.PISOS);
+                        Producto productoLimpieza3 = new Limpieza("Jabon en polvo", 1, 60, 30, true,10, TipoAplicacion.ROPA);
+                        Producto productoLimpieza4 = new Limpieza("Jabon en barra", 1, 10, 40, true,10, TipoAplicacion.ROPA);
+                        Producto productoLimpieza5 = new Limpieza("Paño de microfibra", 1, 10, 40, true,10, TipoAplicacion.MULTIUSO);
+                        Producto productoBebida1 = new Bebida("Gaseosa Manaos", 1, 30, 40, true,10, LocalDate.of(2025, 7, 31), 500, false);
+                        Producto productoBebida2 = new Bebida("Whiskey Jack Daniels", 1, 500, 35, true,10, LocalDate.of(2025, 2, 20), 4,1000,true);
+                        Producto productoEnvasado1 = new Envasado("Queso cremoso", 1, 30, 40, true,10, TipoEnvase.PLASTICO, false, LocalDate.of(2025, 2, 20), 1000);
+                        Producto productoEnvasado2 = new Envasado("Lata de frijoles magicos", 1, 20, 30, true,10, TipoEnvase.LATA, true, LocalDate.of(2026, 3, 20), 1000);
+                        Producto productoEnvasado3 = new Envasado("Mermelada de frutilla", 1, 10, 50, true,10, TipoEnvase.VIDRIO, false, LocalDate.of(2025, 6, 17), 1000);
                         tienda.comprarProducto(productoLimpieza1);
                         tienda.comprarProducto(productoLimpieza2);
                         tienda.comprarProducto(productoLimpieza3);
@@ -56,7 +55,11 @@ public class Main {
                         System.out.println(tienda);
                         break;
                     case "3":
-                        tienda.venderProducto("AZ002", 5);
+                        Map<String, Integer> productosAVender = new HashMap<>();
+                        productosAVender.put("AZ001", 3); // Vender 3 unidades de productoLimpieza1
+                        productosAVender.put("AC002", 1);  // Vender 1 unidades de productoBebida2
+                        productosAVender.put("AB003", 1); // Vender 1 unidades de productoEnvasado3
+                        tienda.venderProductos(productosAVender);
                         break;
                     case "4":
                         break;

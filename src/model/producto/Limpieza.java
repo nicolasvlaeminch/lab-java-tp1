@@ -7,29 +7,20 @@ import model.Producto;
 public class Limpieza extends Producto {
     private TipoAplicacion tipoAplicacion;
 
-    public Limpieza(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia,
-                    boolean disponible, TipoAplicacion tipoAplicacion) {
-        super(descripcion, cantidadStock, precioUnidad,
-                porcentajeGanancia, disponible);
+    public Limpieza(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia, boolean disponible,
+                    double porcentajeDescuento, TipoAplicacion tipoAplicacion) {
+        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible, porcentajeDescuento);
         this.tipoAplicacion = tipoAplicacion;
     }
 
     @Override
     protected String generarId() {
-        if (!GeneradorId.generarIdentificadorLimpieza().matches("AZ\\d{3}")) {
+        String id = GeneradorId.generarIdentificadorLimpieza();
+
+        if (!id.matches("AZ\\d{3}")) {
             throw new IllegalArgumentException("El identificador para productos de limpieza debe seguir el formato AZXXX, donde XXX son dígitos.");
         }
-        return GeneradorId.generarIdentificadorLimpieza();
-    }
-
-    @Override
-    public double calcularPrecioFinal() {
-        return 2;
-    }
-
-    @Override
-    protected double obtenerDescuentoMaximo() {
-        return 0;
+        return id;
     }
 
     public TipoAplicacion getTipoAplicacion() {

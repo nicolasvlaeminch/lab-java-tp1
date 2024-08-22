@@ -1,21 +1,21 @@
 package model.producto;
 
 import enums.TipoEnvase;
-import interfaces.Comestible;
+import interfaces.IComestible;
 import util.GeneradorId;
 import model.Producto;
 
 import java.time.LocalDate;
 
-public class Envasado extends Producto implements Comestible {
+public class Envasado extends Producto implements IComestible {
     private TipoEnvase tipoEnvase;
     private boolean importado;
     private LocalDate fechaVencimiento;
     private double calorias;
 
     public Envasado(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia, boolean disponible,
-                    TipoEnvase tipoEnvase, boolean importado, LocalDate fechaVencimiento, double calorias) {
-        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible);
+                    double porcentajeDescuento, TipoEnvase tipoEnvase, boolean importado, LocalDate fechaVencimiento, double calorias) {
+        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible, porcentajeDescuento);
         this.tipoEnvase = tipoEnvase;
         this.importado = importado;
         this.fechaVencimiento = fechaVencimiento;
@@ -24,28 +24,20 @@ public class Envasado extends Producto implements Comestible {
 
     @Override
     protected String generarId() {
-        if (!GeneradorId.generarIdentificadorEnvasado().matches("AB\\d{3}")) {
+        String id = GeneradorId.generarIdentificadorEnvasado();
+
+        if (!id.matches("AB\\d{3}")) {
             throw new IllegalArgumentException("El identificador para productos envasados debe seguir el formato ABXXX, donde XXX son dígitos.");
         }
-        return GeneradorId.generarIdentificadorEnvasado();
-    }
-
-    @Override
-    protected double obtenerDescuentoMaximo() {
-        return 0;
-    }
-
-    @Override
-    public double calcularPrecioFinal() {
-        double precioFinal = getPrecioUnidad();
-        if (importado) {
-            precioFinal *= 1.12; // Aplicar impuesto del 12%
-        }
-        return precioFinal;
+        return id;
     }
 
     public TipoEnvase getTipoEnvase() {
         return tipoEnvase;
+    }
+
+    public void setImportado(boolean importado) {
+        this.importado = importado;
     }
 
     public boolean isImportado() {

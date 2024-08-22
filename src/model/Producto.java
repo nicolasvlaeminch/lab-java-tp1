@@ -1,8 +1,10 @@
 package model;
 
-import interfaces.Descuento;
+import model.producto.Bebida;
+import model.producto.Envasado;
+import model.producto.Limpieza;
 
-public abstract class Producto implements Descuento {
+public abstract class Producto {
     private final String id;
     private String descripcion;
     private int cantidadStock;
@@ -12,20 +14,34 @@ public abstract class Producto implements Descuento {
     private double porcentajeDescuento;
 
     public Producto(String descripcion, int cantidadStock, double precioUnidad,
-                    double porcentajeGanancia, boolean disponible) {
+                    double porcentajeGanancia, boolean disponible, double porcentajeDescuento) {
         this.id = generarId();
         this.descripcion = descripcion;
         this.cantidadStock = cantidadStock;
         this.precioUnidad = precioUnidad;
         this.porcentajeGanancia = porcentajeGanancia;
         this.disponible = disponible;
+        this.porcentajeDescuento = validarPorcentajeDescuento(porcentajeDescuento);
     }
 
     protected abstract String generarId();
 
-    public abstract double calcularPrecioFinal();
-
-    protected abstract double obtenerDescuentoMaximo();
+    protected double validarPorcentajeDescuento(double porcentajeDescuento) {
+        if (this instanceof Bebida) {
+            if (porcentajeDescuento > 10) {
+                throw new IllegalArgumentException("El porcentaje de descuento para bebidas no puede superar el 10%.");
+            }
+        } else if (this instanceof Envasado) {
+            if (porcentajeDescuento > 15) {
+                throw new IllegalArgumentException("El porcentaje de descuento para productos envasados no puede superar el 15%.");
+            }
+        } else if (this instanceof Limpieza) {
+            if (porcentajeDescuento > 20) {
+                throw new IllegalArgumentException("El porcentaje de descuento para productos de limpieza no puede superar el 20%.");
+            }
+        }
+        return porcentajeDescuento;
+    }
 
     public String getId() {
         return id;
@@ -71,27 +87,6 @@ public abstract class Producto implements Descuento {
         this.disponible = disponible;
     }
 
-    @Override
-    public void setPorcentajeDescuento(double porcentaje) {
-        this.porcentajeDescuento = porcentaje;
-    }
-
-    @Override
-    public double getPorcentajeDescuento() {
-        return this.porcentajeDescuento;
-    }
-
-    @Override
-    public double getPrecioFinalConDescuento() {
-        double precioVentaOriginal = this.getPrecioUnidad();
-
-        // Calcula el factor de descuento (por ejemplo, 0.8 para un 20% de descuento)
-        double factorDescuento = 1 - this.porcentajeDescuento;
-
-        // Multiplica el precio original por el factor de descuento
-
-        return precioVentaOriginal * factorDescuento;
-    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

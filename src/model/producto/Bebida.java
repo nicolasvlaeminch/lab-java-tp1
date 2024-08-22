@@ -1,12 +1,12 @@
 package model.producto;
 
-import interfaces.Comestible;
+import interfaces.IComestible;
 import util.GeneradorId;
 import model.Producto;
 
 import java.time.LocalDate;
 
-public class Bebida extends Producto implements Comestible {
+public class Bebida extends Producto implements IComestible {
     private LocalDate fechaVencimiento;
     private double graduacionAlcoholica;
     private double calorias;
@@ -14,8 +14,8 @@ public class Bebida extends Producto implements Comestible {
 
     // Constructor para bebidas sin alcohol.
     public Bebida(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia,
-                  boolean disponible, LocalDate fechaVencimiento, double calorias, boolean importado) {
-        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible);
+                  boolean disponible,double porcentajeDescuento, LocalDate fechaVencimiento, double calorias, boolean importado) {
+        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible, porcentajeDescuento);
         this.fechaVencimiento = fechaVencimiento;
         this.calorias = calcularCalorias(calorias);
         this.importado = importado;
@@ -23,8 +23,8 @@ public class Bebida extends Producto implements Comestible {
 
     // Constructor sobrecargado para bebidas alcoholicas.
     public Bebida(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia,
-                  boolean disponible, LocalDate fechaVencimiento, double graduacionAlcoholica, double calorias, boolean importado) {
-        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible);
+                  boolean disponible, double porcentajeDescuento, LocalDate fechaVencimiento, double graduacionAlcoholica, double calorias, boolean importado) {
+        super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible, porcentajeDescuento);
         this.fechaVencimiento = fechaVencimiento;
         this.graduacionAlcoholica = graduacionAlcoholica;
         this.calorias = calcularCalorias(calorias);
@@ -33,24 +33,12 @@ public class Bebida extends Producto implements Comestible {
 
     @Override
     protected String generarId() {
-        if (!GeneradorId.generarIdentificadorBebida().matches("AC\\d{3}")) {
+        String id = GeneradorId.generarIdentificadorBebida();
+
+        if (!id.matches("AC\\d{3}")) {
             throw new IllegalArgumentException("El identificador para productos de bebidas debe seguir el formato ACXXX, donde XXX son dígitos.");
         }
-        return GeneradorId.generarIdentificadorBebida();
-    }
-
-    @Override
-    public double calcularPrecioFinal() {
-        double precioFinal = getPrecioUnidad();
-        if (importado) {
-            precioFinal *= 1.12; // Aplicar impuesto del 12%
-        }
-        return precioFinal;
-    }
-
-    @Override
-    protected double obtenerDescuentoMaximo() {
-        return 0;
+        return id;
     }
 
     public boolean isImportado() {
