@@ -1,5 +1,7 @@
 package model;
 
+import exception.MaxStockSuperadoException;
+import exception.ProductoNoDisponibleException;
 import model.productos.Bebida;
 import model.productos.Envasado;
 
@@ -35,7 +37,7 @@ public class Tienda {
 
     private void verificarCapacidadStock(Producto producto) {
         if (producto.getCantidadStock() > maxProductosEnStock) {
-            throw new IllegalStateException("No se pueden agregar nuevos productos a la tienda ya que se alcanzó el máximo de stock.");
+            throw new MaxStockSuperadoException(maxProductosEnStock, producto.getCantidadStock());
         }
     }
 
@@ -84,7 +86,7 @@ public class Tienda {
 
     private void verificarDisponibilidadParaVenta(Producto producto) {
         if (!producto.isDisponible()) {
-            throw new IllegalStateException("El producto " + producto.getId() + " no se encuentra disponible.");
+            throw new ProductoNoDisponibleException(producto.getId());
         }
     }
 

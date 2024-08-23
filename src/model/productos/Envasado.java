@@ -1,6 +1,7 @@
 package model.productos;
 
 import enums.TipoEnvase;
+import exception.IdNoValidoException;
 import interfaces.IComestible;
 import util.GeneradorId;
 import model.Producto;
@@ -27,7 +28,7 @@ public class Envasado extends Producto implements IComestible {
         String id = GeneradorId.generarIdentificadorEnvasado();
 
         if (!id.matches("AB\\d{3}")) {
-            throw new IllegalArgumentException("El identificador para productos envasados debe seguir el formato ABXXX, donde XXX son dígitos.");
+            throw new IdNoValidoException(id, "ABXXX");
         }
         return id;
     }

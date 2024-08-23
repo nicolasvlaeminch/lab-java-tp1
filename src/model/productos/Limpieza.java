@@ -1,6 +1,7 @@
 package model.productos;
 
 import enums.TipoAplicacion;
+import exception.IdNoValidoException;
 import util.GeneradorId;
 import model.Producto;
 
@@ -18,7 +19,7 @@ public class Limpieza extends Producto {
         String id = GeneradorId.generarIdentificadorLimpieza();
 
         if (!id.matches("AZ\\d{3}")) {
-            throw new IllegalArgumentException("El identificador para productos de limpieza debe seguir el formato AZXXX, donde XXX son dígitos.");
+            throw new IdNoValidoException(id, "AZXXX");
         }
         return id;
     }

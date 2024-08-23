@@ -1,5 +1,6 @@
 package model.productos;
 
+import exception.IdNoValidoException;
 import interfaces.IComestible;
 import util.GeneradorId;
 import model.Producto;
@@ -36,7 +37,7 @@ public class Bebida extends Producto implements IComestible {
         String id = GeneradorId.generarIdentificadorBebida();
 
         if (!id.matches("AC\\d{3}")) {
-            throw new IllegalArgumentException("El identificador para productos de bebidas debe seguir el formato ACXXX, donde XXX son dígitos.");
+            throw new IdNoValidoException(id, "ACXXX");
         }
         return id;
     }
