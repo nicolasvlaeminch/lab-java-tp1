@@ -1,4 +1,4 @@
-package model.producto;
+package model.productos;
 
 import enums.TipoAplicacion;
 import util.GeneradorId;
@@ -29,8 +29,7 @@ public class Limpieza extends Producto {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(super.toString());
-        sb.append(", Tipo Aplicacion: ").append(tipoAplicacion).append("\n");
-        return sb.toString();
+        return super.toString()
+                + ", Tipo Aplicación: " + tipoAplicacion + "\n";
     }
 }

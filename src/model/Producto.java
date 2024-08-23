@@ -1,8 +1,9 @@
 package model;
 
-import model.producto.Bebida;
-import model.producto.Envasado;
-import model.producto.Limpieza;
+import enums.TipoAplicacion;
+import model.productos.Bebida;
+import model.productos.Envasado;
+import model.productos.Limpieza;
 
 public abstract class Producto {
     private final String id;
@@ -19,14 +20,14 @@ public abstract class Producto {
         this.descripcion = descripcion;
         this.cantidadStock = cantidadStock;
         this.precioUnidad = precioUnidad;
-        this.porcentajeGanancia = porcentajeGanancia;
+        this.porcentajeGanancia = validarPorcentajeGanancia(porcentajeGanancia);
         this.disponible = disponible;
         this.porcentajeDescuento = validarPorcentajeDescuento(porcentajeDescuento);
     }
 
     protected abstract String generarId();
 
-    protected double validarPorcentajeDescuento(double porcentajeDescuento) {
+    private double validarPorcentajeDescuento(double porcentajeDescuento) {
         if (this instanceof Bebida) {
             if (porcentajeDescuento > 10) {
                 throw new IllegalArgumentException("El porcentaje de descuento para bebidas no puede superar el 10%.");
@@ -41,6 +42,23 @@ public abstract class Producto {
             }
         }
         return porcentajeDescuento;
+    }
+
+    private double validarPorcentajeGanancia(double porcentajeGanancia) {
+        if (this instanceof Bebida || this instanceof Envasado) {
+            if (porcentajeGanancia > 20) {
+                throw new IllegalArgumentException("El porcentaje de ganancia para los productos comestibles no puede superar el 20%.");
+            }
+        } else if (this instanceof Limpieza limpieza) {
+            TipoAplicacion tipoAplicacion = limpieza.getTipoAplicacion();
+            if (!(tipoAplicacion == TipoAplicacion.COCINA || tipoAplicacion == TipoAplicacion.MULTIUSO)) {
+                if (porcentajeGanancia < 10 || porcentajeGanancia > 25) {
+                    throw new IllegalArgumentException("El porcentaje de ganancia para los productos de limpieza que no" +
+                            " sean de tipo COCINA o MULTIUSO no puede ser menor al 10% ni superar el 25%.");
+                }
+            }
+        }
+        return porcentajeGanancia;
     }
 
     public String getId() {
@@ -75,10 +93,6 @@ public abstract class Producto {
         return porcentajeGanancia;
     }
 
-    public void setPorcentajeGanancia(double porcentajeGanancia) {
-        this.porcentajeGanancia = porcentajeGanancia;
-    }
-
     public boolean isDisponible() {
         return disponible;
     }
@@ -87,16 +101,17 @@ public abstract class Producto {
         this.disponible = disponible;
     }
 
+    public double getPorcentajeDescuento() {
+        return porcentajeDescuento;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ID: ").append(id)
-                .append(", Descripción: ").append(descripcion)
-                .append(", Cantidad en Stock: ").append(cantidadStock)
-                .append(", Precio por Unidad: ").append(precioUnidad)
-                .append(", Porcentaje de Ganancia: ").append(porcentajeGanancia)
-                .append(", Disponible para la Venta: ").append(disponible);
-
-        return sb.toString();
+        return "ID: " + id
+                + ", Descripción: " + descripcion
+                + ", Cantidad en Stock: " + cantidadStock
+                + ", Precio por Unidad: " + String.format("%.2f", precioUnidad)
+                + ", Porcentaje de Ganancia: " + porcentajeGanancia
+                + ", Disponible para la Venta: " + disponible;
     }
 }

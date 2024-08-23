@@ -1,11 +1,10 @@
 package model;
 
-import model.producto.Bebida;
-import model.producto.Envasado;
+import model.productos.Bebida;
+import model.productos.Envasado;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Tienda {
     private String nombre;
@@ -24,30 +23,6 @@ public class Tienda {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public int getMaxProductosEnStock() {
-        return maxProductosEnStock;
-    }
-
-    public void setMaxProductosEnStock(int maxProductosEnStock) {
-        this.maxProductosEnStock = maxProductosEnStock;
-    }
-
-    public double getSaldoCaja() {
-        return saldoCaja;
-    }
-
-    public void setSaldoCaja(double saldoCaja) {
-        this.saldoCaja = saldoCaja;
-    }
-
-    public List<Producto> getProductosEnStock() {
-        return productosEnStock;
-    }
-
     private double calcularTotalProducto(Producto producto) {
         return producto.getCantidadStock() * producto.getPrecioUnidad();
     }
@@ -64,8 +39,18 @@ public class Tienda {
         }
     }
 
-    private void actualizarSaldo(double cantidad) {
-        saldoCaja += cantidad;
+    private void actualizarSaldo(double aniadirSaldo) {
+        saldoCaja += aniadirSaldo;
+    }
+
+    private void actualizarMaxStock(int aniadirMaxStock) {
+        maxProductosEnStock += aniadirMaxStock;
+    }
+
+    private void agregarPorcentajeGanancia(Producto producto) {
+        double precioConGanancia = (producto.getPrecioUnidad() * producto.getPorcentajeGanancia()) / 100;
+
+        producto.setPrecioUnidad(precioConGanancia + producto.getPrecioUnidad());
     }
 
     public void comprarProducto(Producto producto) {
@@ -74,9 +59,25 @@ public class Tienda {
         verificarSaldo(totalProducto);
         verificarCapacidadStock(producto);
 
-        productosEnStock.add(producto);
         actualizarSaldo(-totalProducto);
-        maxProductosEnStock -= producto.getCantidadStock();
+        agregarPorcentajeGanancia(producto);
+
+        boolean productoExiste = false;
+
+        for (Producto p : productosEnStock) {
+            if (p.getId().equals(producto.getId())) {
+                p.setDisponible(true);
+                this.maxProductosEnStock -= producto.getCantidadStock();
+                p.setCantidadStock(p.getCantidadStock() + producto.getCantidadStock());
+                productoExiste = true;
+                break;
+            }
+        }
+
+        if (!productoExiste) {
+            productosEnStock.add(producto);
+            maxProductosEnStock -= producto.getCantidadStock();
+        }
 
         System.out.println("Producto: " + producto.getId() + " - " + producto.getDescripcion() + " agregado con exito a la tienda.");
     }
@@ -103,8 +104,7 @@ public class Tienda {
     }
 
     private void generarFactura(Producto producto, int cantidadVendida, boolean stockInsuficiente, double precioFinal) {
-        System.out.println(producto.getId() + " " + producto.getDescripcion() + " " + cantidadVendida + " x " + precioFinal);
-//        System.out.println("TOTAL VENTA: " + totalVenta);
+        System.out.println(producto.getId() + " " + producto.getDescripcion() + " " + cantidadVendida + " x " + String.format("%.2f", precioFinal));
 
         if (stockInsuficiente) {
             System.out.println("Hay productos con stock disponible menor al solicitado.");
@@ -119,56 +119,85 @@ public class Tienda {
     }
 
     public void venderProductos(Map<String, Integer> productosAVender) {
-        if (productosAVender.size() > 3) {
+        if (productosAVender.isEmpty()) {
+            throw new IllegalArgumentException("No hay ningun producto para vender.");
+        } else if (productosAVender.size() > 3) {
             throw new IllegalArgumentException("No se pueden vender más de 3 productos a la vez.");
         }
+        else {
+            double totalVenta = 0.0;
+            boolean stockInsuficiente = false;
+            int cantidadProductos = 0;
 
-        double totalVenta = 0.0;
-        boolean stockInsuficiente = false;
+            for (Map.Entry<String, Integer> entry : productosAVender.entrySet()) {
+                String identificador = entry.getKey();
+                int cantidadSolicitada = entry.getValue();
 
-        for (Map.Entry<String, Integer> entry : productosAVender.entrySet()) {
-            String identificador = entry.getKey();
-            int cantidadSolicitada = entry.getValue();
+                if (cantidadSolicitada > 12) {
+                    throw new IllegalArgumentException("No se pueden vender más de 12 unidades de un mismo producto.");
+                }
 
-            if (cantidadSolicitada > 12) {
-                throw new IllegalArgumentException("No se pueden vender más de 12 unidades de un mismo producto.");
+                Producto producto = buscarProductoPorIdentificador(identificador);
+
+                verificarDisponibilidadParaVenta(producto);
+
+                int cantidadVendida = venderUnidades(producto, cantidadSolicitada);
+                double totalProducto = calcularTotalVenta(producto, cantidadVendida);
+
+                // Verificar si el producto es importado y aplicar el impuesto
+                if ((producto instanceof Bebida && ((Bebida) producto).isImportado()) ||
+                        (producto instanceof Envasado && ((Envasado) producto).isImportado())) {
+                    totalProducto *= 1.12; // Aplicar un 12% de impuesto
+                }
+
+                totalVenta += totalProducto;
+
+                if (cantidadVendida < cantidadSolicitada) {
+                    stockInsuficiente = true;
+                }
+
+                cantidadProductos += cantidadSolicitada;
+
+                generarFactura(producto, cantidadVendida, cantidadVendida < cantidadSolicitada, totalProducto);
             }
 
-            Producto producto = buscarProductoPorIdentificador(identificador);
+            actualizarMaxStock(cantidadProductos);
+            actualizarSaldo(totalVenta);
 
-            verificarDisponibilidadParaVenta(producto);
-
-            int cantidadVendida = venderUnidades(producto, cantidadSolicitada);
-            double totalProducto = calcularTotalVenta(producto, cantidadVendida);
-
-            // Verificar si el producto es importado y aplicar el impuesto
-            if ((producto instanceof Bebida && ((Bebida) producto).isImportado()) ||
-                    (producto instanceof Envasado && ((Envasado) producto).isImportado())) {
-                totalProducto *= 1.12; // Aplicar un 12% de impuesto
+            System.out.println("TOTAL DE LA VENTA: " + String.format("%.2f", totalVenta));
+            if (stockInsuficiente) {
+                System.out.println("Algunos productos tenían stock insuficiente para la cantidad solicitada.");
             }
-
-            totalVenta += totalProducto;
-
-            if (cantidadVendida < cantidadSolicitada) {
-                stockInsuficiente = true;
-            }
-
-            generarFactura(producto, cantidadVendida, cantidadVendida < cantidadSolicitada, totalProducto);
         }
+    }
 
-        actualizarSaldo(totalVenta);
+    public List<String> obtenerComestiblesConMenorDescuento(double porcentajeDescuento) {
+        // Crear una copia de la lista original
+        List<Producto> copiaProductosEnStock = new ArrayList<>(productosEnStock);
 
-        System.out.println("TOTAL DE LA VENTA: " + totalVenta);
-        if (stockInsuficiente) {
-            System.out.println("Algunos productos tenían stock insuficiente para la cantidad solicitada.");
+        // Filtrar, ordenar y mapear los productos en la copia
+        return copiaProductosEnStock.stream()
+                .filter(producto -> esComestibleNoImportado(producto) && producto.getPorcentajeDescuento() < porcentajeDescuento)
+                .sorted(Comparator.comparing(producto -> producto.getDescripcion().toUpperCase(Locale.ROOT)))
+                .map(producto -> producto.getDescripcion().toUpperCase(Locale.ROOT))
+                .collect(Collectors.toList());
+    }
+
+    // Método auxiliar para verificar si el producto es comestible y no importado
+    private boolean esComestibleNoImportado(Producto producto) {
+        if (producto instanceof Bebida) {
+            return !((Bebida) producto).isImportado();
+        } else if (producto instanceof Envasado) {
+            return !((Envasado) producto).isImportado();
         }
+        return false;
     }
 
     @Override
     public String toString() {
         return "Nombre = '" + nombre + '\'' +
                ", Stock disponible = " + maxProductosEnStock +
-               ", Saldo de la caja = " + saldoCaja +
+               ", Saldo de la caja = " + String.format("%.2f", saldoCaja) +
                "\n\nProductos en Stock : \n" + productosEnStock;
     }
 }

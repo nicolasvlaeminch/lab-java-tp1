@@ -1,4 +1,4 @@
-package model.producto;
+package model.productos;
 
 import interfaces.IComestible;
 import util.GeneradorId;
@@ -21,7 +21,7 @@ public class Bebida extends Producto implements IComestible {
         this.importado = importado;
     }
 
-    // Constructor sobrecargado para bebidas alcoholicas.
+    // Constructor para bebidas alcoholicas.
     public Bebida(String descripcion, int cantidadStock, double precioUnidad, double porcentajeGanancia,
                   boolean disponible, double porcentajeDescuento, LocalDate fechaVencimiento, double graduacionAlcoholica, double calorias, boolean importado) {
         super(descripcion, cantidadStock, precioUnidad, porcentajeGanancia, disponible, porcentajeDescuento);
@@ -45,10 +45,6 @@ public class Bebida extends Producto implements IComestible {
         return importado;
     }
 
-    public void setImportado(boolean importado) {
-        this.importado = importado;
-    }
-
     @Override
     public LocalDate getFechaVencimiento() {
         return fechaVencimiento;
@@ -69,14 +65,6 @@ public class Bebida extends Producto implements IComestible {
         this.calorias = calorias;
     }
 
-    public double getGraduacionAlcoholica() {
-        return graduacionAlcoholica;
-    }
-
-    public void setGraduacionAlcoholica(double graduacionAlcoholica) {
-        this.graduacionAlcoholica = graduacionAlcoholica;
-    }
-
     public double calcularCalorias(double caloriasBase) {
         if (graduacionAlcoholica <= 2) {
             return caloriasBase;
@@ -89,19 +77,12 @@ public class Bebida extends Producto implements IComestible {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(super.toString());
-
-        sb.append(", Es Importado: ").append(importado)
-          .append(", Fecha de Vencimiento: ").append(fechaVencimiento)
-          .append(", Calorias: ").append(calorias);
-
-        if (graduacionAlcoholica > 0) {
-            sb.append(", Graduacion alcoholica: ").append(graduacionAlcoholica).append("\n");
-        }
-        else {
-            sb.append("\n");
-        }
-
-        return sb.toString();
+        return super.toString()
+                + ", Es Importado: " + importado
+                + ", Fecha de Vencimiento: " + fechaVencimiento
+                + ", Calorías: " + calorias
+                + (graduacionAlcoholica > 0
+                ? ", Graduación alcohólica: " + graduacionAlcoholica + "\n"
+                : "\n");
     }
 }

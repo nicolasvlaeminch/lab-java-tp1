@@ -1,4 +1,4 @@
-package model.producto;
+package model.productos;
 
 import enums.TipoEnvase;
 import interfaces.IComestible;
@@ -32,14 +32,6 @@ public class Envasado extends Producto implements IComestible {
         return id;
     }
 
-    public TipoEnvase getTipoEnvase() {
-        return tipoEnvase;
-    }
-
-    public void setImportado(boolean importado) {
-        this.importado = importado;
-    }
-
     public boolean isImportado() {
         return importado;
     }
@@ -66,13 +58,10 @@ public class Envasado extends Producto implements IComestible {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(super.toString());
-
-        sb.append(", Tipo de envase: ").append(tipoEnvase)
-          .append(", Es Importado: ").append(importado)
-          .append(", Fecha de Vencimiento: ").append(fechaVencimiento)
-          .append(", Calorias: ").append(calorias).append("\n");
-
-        return sb.toString();
+        return super.toString()
+                + ", Tipo de envase: " + tipoEnvase
+                + ", Es Importado: " + importado
+                + ", Fecha de Vencimiento: " + fechaVencimiento
+                + ", Calorías: " + calorias + "\n";
     }
 }
