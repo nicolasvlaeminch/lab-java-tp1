@@ -1,7 +1,6 @@
 package model;
 
-import exception.MaxStockSuperadoException;
-import exception.ProductoNoDisponibleException;
+import exception.*;
 import model.productos.Bebida;
 import model.productos.Envasado;
 
@@ -9,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Tienda {
-    private String nombre;
+    private final String nombre;
     private int maxProductosEnStock;
     private double saldoCaja;
     private final List<Producto> productosEnStock;
@@ -31,7 +30,7 @@ public class Tienda {
 
     private void verificarSaldo(double totalProducto) {
         if (saldoCaja < totalProducto) {
-            throw new IllegalStateException("El producto no podrá ser agregado a la tienda por saldo insuficiente en la caja.");
+            throw new SaldoInsuficienteException(saldoCaja, totalProducto);
         }
     }
 
@@ -124,11 +123,10 @@ public class Tienda {
         if (productosAVender.isEmpty()) {
             throw new IllegalArgumentException("No hay ningun producto para vender.");
         } else if (productosAVender.size() > 3) {
-            throw new IllegalArgumentException("No se pueden vender más de 3 productos a la vez.");
+            throw new MaxProductosException(3, productosAVender.size());
         }
         else {
             double totalVenta = 0.0;
-            boolean stockInsuficiente = false;
             int cantidadProductos = 0;
 
             for (Map.Entry<String, Integer> entry : productosAVender.entrySet()) {
@@ -136,7 +134,7 @@ public class Tienda {
                 int cantidadSolicitada = entry.getValue();
 
                 if (cantidadSolicitada > 12) {
-                    throw new IllegalArgumentException("No se pueden vender más de 12 unidades de un mismo producto.");
+                    throw new MaxUnidadesProductoException(12, cantidadSolicitada);
                 }
 
                 Producto producto = buscarProductoPorIdentificador(identificador);
@@ -154,10 +152,6 @@ public class Tienda {
 
                 totalVenta += totalProducto;
 
-                if (cantidadVendida < cantidadSolicitada) {
-                    stockInsuficiente = true;
-                }
-
                 cantidadProductos += cantidadSolicitada;
 
                 generarFactura(producto, cantidadVendida, cantidadVendida < cantidadSolicitada, totalProducto);
@@ -167,9 +161,6 @@ public class Tienda {
             actualizarSaldo(totalVenta);
 
             System.out.println("TOTAL DE LA VENTA: " + String.format("%.2f", totalVenta));
-            if (stockInsuficiente) {
-                System.out.println("Algunos productos tenían stock insuficiente para la cantidad solicitada.");
-            }
         }
     }
 

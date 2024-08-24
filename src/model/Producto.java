@@ -69,10 +69,6 @@ public abstract class Producto {
         return descripcion;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
     public int getCantidadStock() {
         return cantidadStock;
     }

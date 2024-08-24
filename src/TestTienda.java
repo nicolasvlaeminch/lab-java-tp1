@@ -44,8 +44,8 @@ public class TestTienda {
                     "3 - Vender productos (Prueba de venta exitosa.)\n" +
                     "4 - Test de excepcion al comprar productos superando el maximo de stock.\n" +
                     "5 - Test de excepcion al comprar un productos con saldo insuficiente en la caja.\n" +
-                    "6 - Test de validacion al vender mas de 3 productos a la vez.\n" +
-                    "7 - Test de validacion al vender producto con mas de 12 unidades.\n" +
+                    "6 - Test de excepcion al vender mas de 3 productos a la vez.\n" +
+                    "7 - Test de excepcion al vender producto con mas de 12 unidades.\n" +
                     "8 - Test al vender un productos con unidades mayor al stock disponible.\n" +
                     "9 - Test de excepcion al vender un producto no disponible para la venta.\n" +
                     "10 - Mostrar lista de comestibles con menor descuento.\n" +
