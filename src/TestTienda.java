@@ -32,13 +32,13 @@ public class TestTienda {
         boolean flagCompra = false;
         boolean flagVenta = false;
 
-        System.out.println("******************************************************\n" +
-                "(Se recomienda seguir el orden de los test desde el 1 al 10 para testear correctamente.)");
+        System.out.println("************************************************************************************\n" +
+                "(Se recomienda seguir el orden de los test desde el 1 al 13 para testear correctamente.)");
 
         do {
-            System.out.println("******************************************************\n" +
-                    "********************* " + tienda.getNombre() + " *********************\n" +
-                    "******************************************************\n" +
+            System.out.println("************************************************************************************\n" +
+                    "********************************* " + tienda.getNombre() + " ****************************************\n" +
+                    "************************************************************************************\n" +
                     "1 - Comprar Productos (La tienda no cuenta con productos inicialmente)\n" +
                     "2 - Mostrar Tienda (Mostrara informacion de la tienda junto a sus productos previamente comprados.)\n" +
                     "3 - Vender productos (Prueba de venta exitosa.)\n" +
@@ -48,9 +48,12 @@ public class TestTienda {
                     "7 - Test de excepcion al vender producto con mas de 12 unidades.\n" +
                     "8 - Test al vender un productos con unidades mayor al stock disponible.\n" +
                     "9 - Test de excepcion al vender un producto no disponible para la venta.\n" +
-                    "10 - Mostrar lista de comestibles con menor descuento.\n" +
+                    "10 - Test de excepcion al crear un producto que supere el porcentaje de descuento maximo.\n" +
+                    "11 - Test de excepcion al crear un producto comestible que supere el porcentaje de ganancia maximo.\n" +
+                    "12 - Test de excepcion al crear un producto de limpieza con un porcentaje menor al de ganancia minimo.\n" +
+                    "13 - Mostrar lista de comestibles con menor descuento.\n" +
                     "S - Salir\n" +
-                    "******************************************************\n" +
+                    "************************************************************************************\n" +
                     "Selecciona una opción: \n");
             opcion = scan.nextLine();
 
@@ -127,6 +130,15 @@ public class TestTienda {
                         }
                         break;
                     case "10":
+                        new Bebida("Gaseosa Pepsi", 10, 30, 10, true,50, LocalDate.of(2025, 7, 31), 500, false);
+                        break;
+                    case "11":
+                        new Envasado("Leche vaca buena", 11, 30, 30, true,10, TipoEnvase.PLASTICO, false, LocalDate.of(2025, 2, 20), 800);
+                        break;
+                    case "12":
+                        new Limpieza("Perfume para ropa", 8, 60, 9, true,10, TipoAplicacion.ROPA);
+                        break;
+                    case "13":
                         if (flagCompra) {
                             System.out.println(tienda.obtenerComestiblesConMenorDescuento(15));
                         }

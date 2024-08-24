@@ -1,6 +1,9 @@
 package model;
 
 import enums.TipoAplicacion;
+import exception.DescuentoExcedidoException;
+import exception.PorcentajeGananciaComestiblesInvalidoException;
+import exception.PorcentajeGananciaLimpiezaInvalidoException;
 import model.productos.Bebida;
 import model.productos.Envasado;
 import model.productos.Limpieza;
@@ -30,31 +33,42 @@ public abstract class Producto {
     private double validarPorcentajeDescuento(double porcentajeDescuento) {
         if (this instanceof Bebida) {
             if (porcentajeDescuento > 10) {
-                throw new IllegalArgumentException("El porcentaje de descuento para bebidas no puede superar el 10%.");
+                throw new DescuentoExcedidoException(10, porcentajeDescuento, getTipoProducto());
             }
         } else if (this instanceof Envasado) {
             if (porcentajeDescuento > 15) {
-                throw new IllegalArgumentException("El porcentaje de descuento para productos envasados no puede superar el 15%.");
+                throw new DescuentoExcedidoException(15, porcentajeDescuento, getTipoProducto());
             }
         } else if (this instanceof Limpieza) {
             if (porcentajeDescuento > 20) {
-                throw new IllegalArgumentException("El porcentaje de descuento para productos de limpieza no puede superar el 20%.");
+                throw new DescuentoExcedidoException(20, porcentajeDescuento, getTipoProducto());
             }
         }
         return porcentajeDescuento;
     }
 
+    private String getTipoProducto() {
+        if (this instanceof Bebida) {
+            return "bebidas";
+        } else if (this instanceof Envasado) {
+            return "envasados";
+        } else if (this instanceof Limpieza) {
+            return "limpieza";
+        } else {
+            return "desconocido";
+        }
+    }
+
     private double validarPorcentajeGanancia(double porcentajeGanancia) {
         if (this instanceof Bebida || this instanceof Envasado) {
             if (porcentajeGanancia > 20) {
-                throw new IllegalArgumentException("El porcentaje de ganancia para los productos comestibles no puede superar el 20%.");
+                throw new PorcentajeGananciaComestiblesInvalidoException(20, porcentajeGanancia);
             }
         } else if (this instanceof Limpieza limpieza) {
             TipoAplicacion tipoAplicacion = limpieza.getTipoAplicacion();
             if (!(tipoAplicacion == TipoAplicacion.COCINA || tipoAplicacion == TipoAplicacion.MULTIUSO)) {
                 if (porcentajeGanancia < 10 || porcentajeGanancia > 25) {
-                    throw new IllegalArgumentException("El porcentaje de ganancia para los productos de limpieza que no" +
-                            " sean de tipo COCINA o MULTIUSO no puede ser menor al 10% ni superar el 25%.");
+                    throw new PorcentajeGananciaLimpiezaInvalidoException(25, 10, porcentajeGanancia);
                 }
             }
         }

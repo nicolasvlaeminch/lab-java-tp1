@@ -11,7 +11,7 @@ public class Tienda {
     private final String nombre;
     private int maxProductosEnStock;
     private double saldoCaja;
-    private final List<Producto> productosEnStock;
+    private List<Producto> productosEnStock;
 
     public Tienda(String nombre, int maxProductosEnStock, double saldoCaja) {
         this.nombre = nombre;
@@ -123,7 +123,7 @@ public class Tienda {
         if (productosAVender.isEmpty()) {
             throw new IllegalArgumentException("No hay ningun producto para vender.");
         } else if (productosAVender.size() > 3) {
-            throw new MaxProductosException(3, productosAVender.size());
+            throw new MaxProductosExcedidoException(3, productosAVender.size());
         }
         else {
             double totalVenta = 0.0;

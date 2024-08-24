@@ -1,10 +1,10 @@
 package exception;
 
-public class MaxProductosException extends RuntimeException{
+public class MaxProductosExcedidoException extends RuntimeException{
     private final int maxProductos;
     private final int productosPedidos;
 
-    public MaxProductosException(int maxProductos, int productosPedidos) {
+    public MaxProductosExcedidoException(int maxProductos, int productosPedidos) {
         this.maxProductos = maxProductos;
         this.productosPedidos = productosPedidos;
     }
